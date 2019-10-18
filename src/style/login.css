@@ -1,0 +1,38 @@
+.g-login {
+    width: 100%;
+    height: 100%;
+    background: url('./images/login.jpg') 100% 100% no-repeat;
+}
+.g-title{
+    line-height: 30px;
+    text-align: center;
+    font-size: 18px;
+    color: gray;
+    font-weight: bold;
+}
+.g-login .login-form {
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 10px;
+    box-sizing: content-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    height: 270px;
+}
+
+.login-form-forgot {
+    float: right;
+}
+
+.login-form-button {
+    width: 100%;
+}
+.g-login .login-form-item {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
