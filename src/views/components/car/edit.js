@@ -1,7 +1,7 @@
 import { Icon, Input, Card,Button, Form, DatePicker, InputNumber,message } from 'antd';
 import moment from 'moment';
 import React, { Component } from 'react';
-import axios from '../../../utils/https';
+import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 const formItemLabelCol = {
     labelCol: {

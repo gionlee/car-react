@@ -2,116 +2,112 @@ import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
 import cookie from 'react-cookies';
 import '../style/login.css';
-import axios from '../utils/https';
 import api from '../utils/api';
+import {GET,POST,PUT,DELETE} from '../utils/http';
+import jwt from 'jsonwebtoken';
 class Login extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            checked: false,
-            canSubmit: true,
-            userInfo : {
-                username: '',
-                password: ''
-            }
+    
+    constructor (props) {
+        super(props);
+        this.state= {
+            userInfo: {
+                username : '',
+                password : ''
+            },
+            rememberPw : false,
+            canAgain : true
         }
     }
-    componentDidMount() {
-        if (cookie.load('userInfo.username')) {
+    componentWillMount  () {
+        if(cookie.load('rememberPw')) {
             this.setState({
-                'userInfo.username.value': cookie.load('userInfo.username'),
-                'userInfo.password.value': cookie.load('userInfo.password'),
-                checked: true
+                rememberPw: true
+            })
+            let user_token = jwt.verify(cookie.load('user_token'),'54wp9oyghjeakp')
+            let data = Object.assign({}, this.state.userInfo, {username: user_token.username,password:user_token.password})
+            this.setState({
+                userInfo: data
             })
         }
     }
-
-    login = () => {
-        if (!this.state.canSubmit) {
-
-            return false;
+     UserLogin = async e => {
+        e.preventDefault();
+        let data = this.state.userInfo
+        if (!this.state.canAgain) {
+            return false
         }
-        this.state.canSubmit = false;
-        axios.post(api.userLogin,{username:this.state.userInfo.username.value,password:this.state.userInfo.password.value}).then( (res) => {
-            console.log(res)
-            if(res.data.code == 0) {
-                if (this.state.checked) {
-                    cookie.save('userInfo.username', this.state.userInfo.username.value);
-                    cookie.save('userInfo.password', this.state.userInfo.password.value);
-                    this.props.history.push('/car/list')
-                } else {
-                    cookie.remove('userInfo.username');
-                    cookie.remove('userInfo.password');
-                }
-                message.success('提交成功！',1.5).then( ()=> {
-                    this.props.history.push('/car/list')
-                })
-            } else {
-                alert(res.data.msg);
-            }
-            
-        }).catch( (err) => {
-            console.log(err)
+        this.setState({
+            canAgain: false
         })
-        
+        let res = await POST(api.userLogin,data)
+        if(res.result) {
+            if(this.state.rememberPw) {
+                let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'999999d'})
+                cookie.save('user_token',user_token)
+            }
+            message.success(res.message, 1.5).then( () => {
+                this.props.history.push('/car/list')
+            })
+        } else {
+            message.error(res.message, 1.5).then( ()=> {
+                this.setState({
+                    canAgain: true
+                })
+            })
+        }
     }
-    handleFormChange = changedFields => {
-        this.setState(({ userInfo }) => ({
-            userInfo: { ...userInfo, ...changedFields },
-          }));
-          console.log(this.state)
-    };
+    setUsername = (e) => {
+        let data = Object.assign({}, this.state.userInfo, {username: e.target.value})
+        this.setState({
+            userInfo: data
+        })
+    }
+    setPassword = (e) => {
+        let data = Object.assign({}, this.state.userInfo, {password: e.target.value})
+        this.setState({
+            userInfo: data
+        })
+    }
+    setRememberPw = () => {
+        let bol = !this.state.rememberPw
+        this.setState({
+            rememberPw: bol
+        })
+        if(bol) {
+            cookie.save('rememberPw',true)
+        } else {
+            cookie.remove('rememberPw')
+            cookie.remove('user_token')
+        }
+    }
     render() {
-        const { userInfo } = this.state;
         return (
             <div className="g-login">
-             <CustomizedForm {...userInfo} onSubmit={this.login} onChange={this.handleFormChange} /></div>
-        );
+                <div className="login-form">
+                    <div className="g-title" >
+                        登录
+                    </div>
+                    <Form className="" layout="inline" onSubmit={this.UserLogin}>
+
+                        <Form-Item>
+                            <Input className="login-form-item" value={this.state.userInfo.username} onChange={this.setUsername.bind(this)} prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                        </Form-Item>
+                        <Form-Item>
+                            <Input type="password" className="login-form-item" value={this.state.userInfo.password} onChange={this.setPassword.bind(this)}  prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} />
+                        </Form-Item>
+                        <Form-Item>
+                            <Checkbox checked={this.state.rememberPw} onChange={this.setRememberPw.bind(this)} className="login-form-item">记住密码</Checkbox>
+                        </Form-Item>
+                        <Form-Item>
+                            <Button  className="login-form-item"  type="primary" htmlType="submit" className="login-form-button">
+                                登 录
+                            </Button>
+                            
+                        </Form-Item>
+                    </Form>
+                </div>
+            </div>
+        )
     }
 }
-const CustomizedForm = Form.create({
-    name: 'global_state',
-    onFieldsChange(props, changedFields) {
-        props.onChange(changedFields);
-      },
-    mapPropsToFields(props) {
-        return {
-            'username': Form.createFormField({
-                value:props.username.value
-            }),
-            'password': Form.createFormField({
-                value:props.password.value
-            }),
-        };
-    },
-    onValuesChange(_, values) {
-    },
-})(props => {
-    const { getFieldDecorator } = props.form;
-    return (
-        
-            <Form className="login-form" onSubmit={props.onSubmit}>
-                <div className="g-title">登录</div>
-                <Form.Item className="login-form-item">
-                    {getFieldDecorator('username', {
-                        rules: [{ required: true, message: '用户名不得为空!' }],
-                    })(<Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        placeholder="请输入用户名" />)}
-                </Form.Item>
-                <Form.Item className="login-form-item">
-                    {getFieldDecorator('password', {
-                        rules: [{ required: true, message: '密码不得为空!' }],
-                    })(<Input type="password" prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        placeholder="请输入密码" />)}
-                </Form.Item>
-                <Form.Item className="login-form-item">
-                    <Checkbox  >记住密码</Checkbox>
-                    <a className="login-form-forgot" href="">重置密码</a>
-                    <Button type="primary" htmlType="submit" className="login-form-button">登录</Button>
-                    <a href="">注册</a>
-                </Form.Item>
-            </Form>
-        
-    )
-});
 export default Login;

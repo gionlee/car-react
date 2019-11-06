@@ -5,6 +5,7 @@
   "dependencies": {
     "antd": "^3.18.2",
     "axios": "^0.18.0",
+    "jsonwebtoken": "^8.5.1",
     "qs": "^6.7.0",
     "react": "^16.8.6",
     "react-cookies": "^0.1.1",
@@ -35,5 +36,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage":"."
+  "homepage": "."
 }

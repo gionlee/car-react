@@ -7,4 +7,5 @@ const apis = {
     washCar: 'car/wash',  // 获取车辆操作列表
     deleteCar: 'car/delete'
 }
+
 export default apis;

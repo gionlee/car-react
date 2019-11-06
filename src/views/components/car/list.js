@@ -1,6 +1,6 @@
 import { Icon, Input, Button, Card, Table, Modal, InputNumber,Form ,message} from 'antd';
 import React, { Component } from 'react';
-import axios from '../../../utils/https';
+import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 // import axios from 'axios';
 class car_list extends Component {
@@ -16,19 +16,43 @@ class car_list extends Component {
             carId: 0,
             newSurplus: '',
             deleteVisible: false,
-            loading:true           
+            loading:true,
+            pagination: {
+                current:1,
+                pageSize:10,
+            },
+            
+            word:'',  
         }
     }
     componentWillMount () {
         this.getList()
     }
     getList = ()=> {
-        axios.get(api.carList).then( (res) => {
-            if(res.data.code == '0') {
-                console.log(res)
+        console.log('请求参数',this.state.pagination)
+        let token = sessionStorage.getItem('token')
+        axios({
+            url:api.carList,
+            method:'get',
+            params:{
+                word:this.state.word,
+                page_size: this.state.pagination.pageSize,
+                page_index: this.state.pagination.current -1
+            },
+            withCredeRtials: true
+        }).then( (res) => {
+            if(res.data.result) {
+                let list = res.data.data
+                const pager = { ...this.state.pagination };
+                pager.total = res.data.total
+                list.map( val => {
+                    val.create_time = new Date(val.create_time).format('yyyy-MM-dd hh:mm:ss')
+                    val.last_time = new Date(val.last_time).format('yyyy-MM-dd hh:mm:ss')
+                })
                 this.setState ({
-                    carlist:res.data.data,
-                    loading: false
+                    carlist:list,
+                    loading: false,
+                    pagination:pager
                 })
             }
             
@@ -37,7 +61,6 @@ class car_list extends Component {
         })
     }
     toDetails = (e,record) => {
-
             this.props.history.push('details/'+record.id);
     }
     createCar = (record) => {
@@ -59,7 +82,7 @@ class car_list extends Component {
         e.stopPropagation()
         this.setState({
             visible: true,
-            count:Number(record.surplus),
+            count:Number(record.count),
             surplus:Number(record.surplus),
             carId:record.id
         })  
@@ -73,14 +96,29 @@ class car_list extends Component {
         this.setState({newSurplus:value,surplus:this.state.count - value})
     }
     handleOk = () => {
-        axios.post(api.washCar,{id:this.state.carId,surplus:this.state.newSurplus,remarks:this.state.remarks}).then( (res) => {
-            this.setState ({
-                carlist:JSON.parse(res.data.data).carlist
-            })
+        let data = {id:this.state.carId,count:this.state.newSurplus,remarks:this.state.remarks}
+        axios({
+            url:'/car/wash',
+            method:'post',
+            data :data,
+            withCredeRtials: true
+        }).then( (res) => {
+            if(res.data.result) {
+                message.success(res.data.message,1.5).then( ()=> {
+                    this.setState ({
+                        carlist: res.data.data,
+                        visible: false
+                    })
+                })
+            } else {
+                message.error(res.data.message,1.5).then( ()=> {
+                })
+            }
+            
         }).catch( (err) => {
-            console.log(err)
+            alert(err)
         })
-        this.setState({visible:false})
+        
         
     }
     deleteHandleOk =(id)=> {
@@ -104,19 +142,30 @@ class car_list extends Component {
     handleCancel = () => {
         this.setState({
             visible:false,
-            newSurplus: '',
-            remarks: ''
+            newSurplus: 1,
+            remarks: '洗车'
         })
     }
     setremarks = (e) => {
         this.setState({remarks:e.target.value})
     }
+    setWords = (e) => {
+        this.setState({word:e.target.value})
+    }
+    setPageIndex = async (pagination)=> {
+        const pager = { ...this.state.pagination };             
+        pager.current = pagination.current;
+        await this.setState({
+            pagination: pager,
+        });
+        this.getList()
+    }
     render() {
         const columns = [
             {
                 title: '注册时间',
-                dataIndex: 'register',
-                key: 'register',
+                dataIndex: 'create_time',
+                key: 'create_time',
                 align: 'center',
             },
             {
@@ -127,14 +176,14 @@ class car_list extends Component {
             },
             {
                 title: '联系方式',
-                dataIndex: 'tel',
-                key: 'tel',
+                dataIndex: 'phone',
+                key: 'phone',
                 align: 'center',
             },
             {
                 title: '会员类型',
-                key: 'vip_type',
-                dataIndex: 'vip_type',
+                key: 'car_type',
+                dataIndex: 'car_type',
                 align: 'center',
             },
             {
@@ -173,13 +222,16 @@ class car_list extends Component {
                         >
                             &nbsp;&nbsp;新增
                         </Button></div>
-                    <div className="g-text-right g-m-20"><Input className="g-input" placeholder="Basic usage" /><Button className="g-search" shape="circle" icon="search" /></div>
+                    <div className="g-text-right g-m-20"><Input className="g-input" placeholder="Basic usage" onInput={this.setWords.bind(this)} /><Button className="g-search" shape="circle" icon="search" onClick={this.getList.bind(this)} /></div>
                     <div className="g-h-40"></div>
-                    <Table loading={this.state.loading} onRow={(record) => {
-                        return {
-                            onClick: event => { this.toDetails(event,record) },
-                        }
-                    }}
+                    <Table loading={this.state.loading} 
+                        onRow={(record) => {
+                            return {
+                                onClick: event => { this.toDetails(event,record) },
+                            }
+                        }}
+                        pagination={this.state.pagination}
+                        onChange={this.setPageIndex.bind(this)}
                         columns={columns} dataSource={this.state.carlist} rowKey="id" />
                 </Card>
                 <Modal
