@@ -8,7 +8,7 @@ const history = createHistory()
 const BasicRoute = () => (
     <Router history={history}>   
         <Switch>     
-        <Route exact path="/" component={Login}></Route>
+        <Route exact path="/login" component={Login}></Route>
         <Route path="/*" component={Layout}></Route>
         </Switch>
     </Router>

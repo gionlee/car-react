@@ -1,8 +1,10 @@
-import { Icon, Input, Card,Button, Form, DatePicker, InputNumber,message } from 'antd';
+import { Icon, Input, Card,Button, Form,Select, Spin,DatePicker, InputNumber,message } from 'antd';
 import moment from 'moment';
 import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
+import carCityType from '../../../utils/carCityType'
+const { Option } = Select;
 const formItemLabelCol = {
     labelCol: {
 
@@ -12,22 +14,35 @@ const formItemLabelCol = {
 
     },
 }
+const carType = [{
+    value:'C',
+    name:'小型车'
+},{
+    value:'B',
+    name:'中型车'
+},{
+    value:'A',
+    name:'大型车'
+}];
 const dateFormat = 'YYYY/MM/DD';
 class car_edit extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            loading:true,
             car_edit: {
-                register: '',
+                create_time: '',
                 car_number: '',
-                tel: '',
-                vip_type: '',
+                phone: '',
+                real_name: '',
                 last_time: '',
-                car_type: '',
+                car_type: 'C',
                 money: '',
                 remarks: '',
-                surplus: ''
-            }
+                count: '',
+                city:'冀B'
+            },
+
         }
 
     }
@@ -36,28 +51,33 @@ class car_edit extends Component {
         axios.get(api.carDetails+ '?id='+id).then( (res) => {
             if(res.data.code == 0) {
                 this.setState({
-                    car_edit: res.data.data
+                    car_edit: res.data.info,
+                    loading:false
                 })
             }
         })
     }
     setRegister = (date, dateString) => {
-        this.setState({car_edit:Object.assign({}, this.state.car_edit, { register: dateString })})
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { create_time: dateString })})
     }
     setCarNumber = (e) => {
-        this.setState({car_edit:Object.assign({}, this.state.car_edit, { car_number: e.target.value })})
+        let value = e.target.value
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { car_number: value})})
     }
     setTel = (e) => {
-        this.setState({car_edit:Object.assign({}, this.state.car_edit, { tel: e.target.value })})
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { phone: e.target.value })})
     }
     setVipType = (e) => {
         this.setState({car_edit:Object.assign({}, this.state.car_edit, { vip_type: e.target.value })})
     }
-    setCarType = (e) => {
-        this.setState({car_edit:Object.assign({}, this.state.car_edit, { car_type: e.target.value })})
+    setCarcCity = (value) => {
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { city: value })})
+    }
+    setCarType = (value) => {
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { car_type: value })})
     }
     setSurplus = (value) => {
-        this.setState({car_edit:Object.assign({}, this.state.car_edit, { surplus: value })})
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { count: value })})
     }
     setMoney = (value) => {
         this.setState({car_edit:Object.assign({}, this.state.car_edit, { money: value })})
@@ -65,9 +85,18 @@ class car_edit extends Component {
     setRemarks = (e) => {       
         this.setState({car_edit:Object.assign({}, this.state.car_edit, { remarks: e.target.value })})
     }
+
+    setRealName = (e) => {       
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { real_name: e.target.value })})
+    }
+    
     editCar = () => {
+        this.setState({
+            loading:true
+        })
         axios.post(api.editCar,this.state.car_edit).then( (res) => {
             if(res.data.code == 0) {
+                
                 message.success('提交成功！',1.5).then( ()=> {
                     this.props.history.push('/car/list')
                 })
@@ -85,6 +114,7 @@ class car_edit extends Component {
     }
     render() {
         return (
+            <Spin size="large"  tip="Loading..." spinning={this.state.loading} >
             <div className="g-body">
                 <Card hoverable className="g-card">
                     <div className="g-card-head">
@@ -93,25 +123,30 @@ class car_edit extends Component {
                     <div className="g-h-40"></div>
                     <Form {...formItemLabelCol} layout="inline">
                         <Form.Item label="注册时间">
-                            <Input className="g-input g-text-left" value={this.state.car_edit.register} readOnly/>
+                            <Input className="g-input g-text-left" value={new Date(this.state.car_edit.create_time).format('yyyy-MM-dd hh:mm:ss')} readOnly/>
                         </Form.Item>
                         <Form.Item label="车牌号">
-                            <Input className="g-input g-text-left" value={this.state.car_edit.car_number} onInput={this.setCarNumber.bind(this)} />
+                            <Select className="g-city" showSearch value={this.state.car_edit.city}  onChange={this.setCarcCity.bind(this)} > 
+        {carCityType.map((item,index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                            </Select>
+                            <Input className="g-input g-text-left g-city-input" value={this.state.car_edit.car_number} onInput={this.setCarNumber.bind(this)} />
                         </Form.Item>
                         <Form.Item label="联系方式">
-                            <Input className="g-input g-text-left" value={this.state.car_edit.tel} onInput={this.setTel.bind(this)} />
+                            <Input className="g-input g-text-left" value={this.state.car_edit.phone} onInput={this.setTel.bind(this)} />
                         </Form.Item>
-                        <Form.Item label="会员类型">
-                            <Input className="g-input g-text-left" value={this.state.car_edit.vip_type} onInput={this.setVipType.bind(this)} />
+                        <Form.Item label="车主姓名">
+                            <Input className="g-input g-text-left" value={this.state.car_edit.real_name} onInput={this.setRealName.bind(this)} />
                         </Form.Item>
                         <br />
                         <Form.Item label="车辆类型">
-                            <Input className="g-input g-text-left" value={this.state.car_edit.car_type} onInput={this.setCarType.bind(this)} />
+                            <Select  className="g-select" value={this.state.car_edit.car_type} onChange={this.setCarType.bind(this)}>
+                                {carType.map( (item) => <Option key={item.value} value={item.value}>{item.name}</Option>)}
+                            </Select>
                         </Form.Item>
                         <Form.Item label="可用次数">
-                            <InputNumber className="g-input g-text-left" value={this.state.car_edit.surplus} onChange={this.setSurplus.bind(this)} />
+                            <InputNumber className="g-input g-text-left" value={this.state.car_edit.count} onChange={this.setSurplus.bind(this)} />
                         </Form.Item>
-                        <Form.Item label="收款金额">
+                        <Form.Item label="可用金额">
                             <InputNumber
                                  value={this.state.car_edit.money}
                                 className="g-input g-text-left"
@@ -130,6 +165,7 @@ class car_edit extends Component {
                     </div>
                 </Card>
             </div>
+            </Spin>
         )
     }
 }

@@ -3,17 +3,7 @@ import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 // import axios from 'axios';
-const carType = [{
-    value:'C',
-    name:'小型车'
-},{
-    value:'B',
-    name:'中型车'
-},{
-    value:'A',
-    name:'大型车'
-}];
-class car_list extends Component {
+class user_list extends Component {
     constructor(props) {
         super(props);
         this.input = React.createRef();
@@ -22,7 +12,7 @@ class car_list extends Component {
             bubb: true,
             count: 0,
             surplus: '',
-            remarks: '洗车',
+            remarks: '',
             carId: 0,
             newSurplus: '',
             deleteVisible: false,
@@ -56,7 +46,6 @@ class car_list extends Component {
                 list.map( val => {
                     val.create_time = new Date(val.create_time).format('yyyy-MM-dd hh:mm:ss')
                     val.last_time = new Date(val.last_time).format('yyyy-MM-dd hh:mm:ss')
-                    val.car_number = val.city + val.car_number
                 })
                 this.setState ({
                     carlist:list,
@@ -68,15 +57,6 @@ class car_list extends Component {
         }).catch( (err) => {
             console.log(err)
         })
-    }
-    getValueByCode = (code) => {
-        let val = ''
-        carType.map( item => {
-            if(item.value == code) {
-                val = item.name
-            }
-        })
-        return val;
     }
     toDetails = (e,record) => {
             this.props.history.push('details/'+record.id);
@@ -114,7 +94,7 @@ class car_list extends Component {
         this.setState({newSurplus:value,surplus:this.state.count - value})
     }
     handleOk = () => {
-        let data = {id:this.state.carId,count:this.state.newSurplus,surplus:this.state.surplus,remarks:this.state.remarks}
+        let data = {id:this.state.carId,count:this.state.newSurplus,remarks:this.state.remarks}
         axios({
             url:'/car/wash',
             method:'post',
@@ -123,10 +103,10 @@ class car_list extends Component {
         }).then( (res) => {
             if(res.data.result) {
                 message.success(res.data.message,1.5).then( ()=> {
-                    this.setState({
+                    this.setState ({
+                        carlist: res.data.data,
                         visible: false
                     })
-                    this.getList()
                 })
             } else {
                 message.error(res.data.message,1.5).then( ()=> {
@@ -191,7 +171,6 @@ class car_list extends Component {
                 dataIndex: 'car_number',
                 key: 'car_number',
                 align: 'center',
-                
             },
             {
                 title: '联系方式',
@@ -200,13 +179,10 @@ class car_list extends Component {
                 align: 'center',
             },
             {
-                title: '车辆类型',
+                title: '会员类型',
                 key: 'car_type',
                 dataIndex: 'car_type',
                 align: 'center',
-                render:(text,record) => (
-                <div>{this.getValueByCode(text)}</div>
-                    )
             },
             {
                 title: '上次洗车时间',
@@ -230,14 +206,12 @@ class car_list extends Component {
         ];
         return (
             <div className="g-body">
+                <div className="g-h-40"></div>
                 <Card hoverable className="g-card">
                     <div className="g-card-head">
                         <Icon type="profile" />
                     </div>
                     <div className="g-text-right">
-                        <div className="g-inline-block g-pdr-100">
-                        <Input className="g-input" placeholder="Basic usage" onInput={this.setWords.bind(this)} /><Button className="g-search" shape="circle" icon="search" onClick={this.getList.bind(this)} />
-                        </div>
                         <Button
                             type="primary"
                             icon="plus"
@@ -245,10 +219,9 @@ class car_list extends Component {
                             onClick={this.createCar}
                         >
                             &nbsp;&nbsp;新增
-                        </Button>
-                        <div className="g-text-right g-m-20"></div>    
-                    </div>
-                    
+                        </Button></div>
+                    <div className="g-text-right g-m-20"><Input className="g-input" placeholder="Basic usage" onInput={this.setWords.bind(this)} /><Button className="g-search" shape="circle" icon="search" onClick={this.getList.bind(this)} /></div>
+                    <div className="g-h-40"></div>
                     <Table loading={this.state.loading} 
                         onRow={(record) => {
                             return {
@@ -275,7 +248,7 @@ class car_list extends Component {
                         {this.state.count - this.state.newSurplus}
                         </Form.Item>
                         <Form.Item label="备注">
-                        <Input value={this.state.remarks}  onInput={this.setremarks.bind(this)} className="g-input"  />
+                        <Input  onInput={this.setremarks.bind(this)} className="g-input"  />
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -293,4 +266,4 @@ class car_list extends Component {
         );
     }
 }
-export default car_list;
+export default user_list;
