@@ -45,6 +45,7 @@ class Login extends React.Component {
                 let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'999999d'})
                 cookie.save('user_token',user_token)
             }
+            sessionStorage.setItem('user_id',res.data.id)
             message.success(res.message, 1.5).then( () => {
                 this.props.history.push('/car/list')
             })

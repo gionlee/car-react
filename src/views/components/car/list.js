@@ -45,7 +45,8 @@ class car_list extends Component {
             params:{
                 word:this.state.word,
                 page_size: this.state.pagination.pageSize,
-                page_index: this.state.pagination.current -1
+                page_index: this.state.pagination.current -1,
+                user_id :sessionStorage.getItem('user_id')
             },
             withCredeRtials: true
         }).then( (res) => {
@@ -181,10 +182,13 @@ class car_list extends Component {
     render() {
         const columns = [
             {
-                title: '注册时间',
+                title: '注册日期',
                 dataIndex: 'create_time',
                 key: 'create_time',
                 align: 'center',
+                render:(text) => (
+                <div>{text.split(' ')[0]}</div>
+                )
             },
             {
                 title: '车牌号码',

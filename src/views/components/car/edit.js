@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 import carCityType from '../../../utils/carCityType'
+import carType from '../../../utils/carType'
 const { Option } = Select;
 const formItemLabelCol = {
     labelCol: {
@@ -14,16 +15,7 @@ const formItemLabelCol = {
 
     },
 }
-const carType = [{
-    value:'C',
-    name:'小型车'
-},{
-    value:'B',
-    name:'中型车'
-},{
-    value:'A',
-    name:'大型车'
-}];
+
 const dateFormat = 'YYYY/MM/DD';
 class car_edit extends Component {
     constructor(props) {

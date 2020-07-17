@@ -1,8 +1,11 @@
-import { Icon, Input, Card,Button, Form, DatePicker, InputNumber,message } from 'antd';
+import { Icon, Input, Card,Button,Select, Form, DatePicker, InputNumber,message } from 'antd';
 import moment from 'moment';
 import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
+import carCityType from '../../../utils/carCityType'
+import carType from '../../../utils/carType'
+const { Option } = Select;
 const formItemLabelCol = {
     labelCol: {
 
@@ -23,10 +26,13 @@ class car_create extends Component {
                 tel: '',
                 vip_type: '',
                 last_time: '',
-                car_type: '',
+                car_type: 'C',
+                real_name:'',
                 money: '',
                 remarks: '',
-                surplus: 0
+                city:'冀B',
+                count: 0,
+                user_id:45
             }
         }
 
@@ -43,17 +49,26 @@ class car_create extends Component {
     setVipType = (e) => {
         this.setState({car_create:Object.assign({}, this.state.car_create, { vip_type: e.target.value })})
     }
-    setCarType = (e) => {
-        this.setState({car_create:Object.assign({}, this.state.car_create, { car_type: e.target.value })})
+    setCarType = (value) => {
+        this.setState({car_create:Object.assign({}, this.state.car_create, { car_type: value })})
     }
     setSurplus = (value) => {
         this.setState({car_create:Object.assign({}, this.state.car_create, { surplus: value })})
+    }
+    setCount = (value) => {
+        this.setState({car_create:Object.assign({}, this.state.car_create, { count: value })})
     }
     setMoney = (value) => {
         this.setState({car_create:Object.assign({}, this.state.car_create, { money: value })})
     }
     setRemarks = (e) => {       
         this.setState({car_create:Object.assign({}, this.state.car_create, { remarks: e.target.value })})
+    }
+    setCarCity = (value) => {
+        this.setState({car_create:Object.assign({}, this.state.car_create, { city: value })})
+    }
+    setRealName =(e) => {
+        this.setState({car_create:Object.assign({}, this.state.car_create, { real_name: e.target.value })})
     }
     createCar = () => {
         let data = this.state.car_create
@@ -89,20 +104,25 @@ class car_create extends Component {
                             <DatePicker className="g-input g-text-left" defaultValue={moment(new Date(), dateFormat)} onChange={this.setRegister} />
                         </Form.Item>
                         <Form.Item label="车牌号">
-                            <Input className="g-input g-text-left" onInput={this.setCarNumber.bind(this)} />
+                        <Select className="g-city" showSearch value={this.state.car_create.city}  onChange={this.setCarCity.bind(this)} > 
+        {carCityType.map((item,index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                            </Select>
+                            <Input className="g-input g-text-left g-city-input" value={this.state.car_create.car_number} onInput={this.setCarNumber.bind(this)} />
                         </Form.Item>
                         <Form.Item label="联系方式">
                             <Input className="g-input g-text-left" onInput={this.setTel.bind(this)} />
                         </Form.Item>
-                        <Form.Item label="会员类型">
-                            <Input className="g-input g-text-left" onInput={this.setVipType.bind(this)} />
+                        <Form.Item label="姓名">
+                            <Input className="g-input g-text-left" onInput={this.setRealName.bind(this)} />
                         </Form.Item>
                         <br />
                         <Form.Item label="车辆类型">
-                            <Input className="g-input g-text-left" onInput={this.setCarType.bind(this)} />
+                        <Select  className="g-select" value={this.state.car_create.car_type} onChange={this.setCarType.bind(this)}>
+                                {carType.map( (item) => <Option key={item.value} value={item.value}>{item.name}</Option>)}
+                            </Select>
                         </Form.Item>
                         <Form.Item label="可用次数">
-                            <InputNumber className="g-input g-text-left" onChange={this.setSurplus.bind(this)} />
+                            <InputNumber className="g-input g-text-left" onChange={this.setCount.bind(this)} />
                         </Form.Item>
                         <Form.Item label="收款金额">
                             <InputNumber
