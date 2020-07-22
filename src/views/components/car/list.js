@@ -2,17 +2,7 @@ import { Icon, Input, Button, Card, Table, Modal, InputNumber,Form ,message} fro
 import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
-// import axios from 'axios';
-const carType = [{
-    value:'C',
-    name:'小型车'
-},{
-    value:'B',
-    name:'中型车'
-},{
-    value:'A',
-    name:'大型车'
-}];
+import {getCarType} from '../../../utils/carType'
 class car_list extends Component {
     constructor(props) {
         super(props);
@@ -57,7 +47,6 @@ class car_list extends Component {
                 list.map( val => {
                     val.create_time = new Date(val.create_time).format('yyyy-MM-dd hh:mm:ss')
                     val.last_time = new Date(val.last_time).format('yyyy-MM-dd hh:mm:ss')
-                    val.car_number = val.city + val.car_number
                 })
                 this.setState ({
                     carlist:list,
@@ -69,15 +58,6 @@ class car_list extends Component {
         }).catch( (err) => {
             console.log(err)
         })
-    }
-    getValueByCode = (code) => {
-        let val = ''
-        carType.map( item => {
-            if(item.value == code) {
-                val = item.name
-            }
-        })
-        return val;
     }
     toDetails = (e,record) => {
             this.props.history.push('details/'+record.id);
@@ -195,13 +175,9 @@ class car_list extends Component {
                 dataIndex: 'car_number',
                 key: 'car_number',
                 align: 'center',
-                
-            },
-            {
-                title: '联系方式',
-                dataIndex: 'phone',
-                key: 'phone',
-                align: 'center',
+                render: (text,record)=> (
+                    <div>{record.city + record.car_number}</div>
+                    )
             },
             {
                 title: '车辆类型',
@@ -209,7 +185,7 @@ class car_list extends Component {
                 dataIndex: 'car_type',
                 align: 'center',
                 render:(text,record) => (
-                <div>{this.getValueByCode(text)}</div>
+                <div>{getCarType(text)}</div>
                     )
             },
             {

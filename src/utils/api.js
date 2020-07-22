@@ -5,7 +5,10 @@ const apis = {
     editCar: 'car/edit',       // 编辑
     carDetails: 'car/details',  // 详情
     washCar: 'car/wash',  // 获取车辆操作列表
-    deleteCar: 'car/delete'
+    deleteCar: 'car/delete',
+    userList:'user/list',
+    userDetails:'user/details',
+    userEdit: 'user/edit'
 }
 
 export default apis;

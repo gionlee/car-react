@@ -8,4 +8,13 @@ const carType = [{
     value:'A',
     name:'大型车'
 }];
-export default carType;
+function getCarType (code){
+    let val = ''
+    carType.map( item => {
+        if(item.value == code) {
+            val = item.name
+        }
+    })
+    return val;
+}
+export {carType, getCarType};

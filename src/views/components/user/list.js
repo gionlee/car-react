@@ -16,6 +16,8 @@ class user_list extends Component {
             carId: 0,
             newSurplus: '',
             deleteVisible: false,
+            car_number:'',
+
             loading:true,
             pagination: {
                 current:1,
@@ -30,7 +32,7 @@ class user_list extends Component {
     }
     getList = ()=> {
         axios({
-            url:api.carList,
+            url:api.userList,
             method:'get',
             params:{
                 word:this.state.word,
@@ -167,9 +169,15 @@ class user_list extends Component {
                 align: 'center',
             },
             {
-                title: '车牌号码',
-                dataIndex: 'car_number',
-                key: 'car_number',
+                title: '姓名',
+                dataIndex: 'real_name',
+                key: 'real_name',
+                align: 'center',
+            },
+            {
+                title: '登录用户名',
+                dataIndex: 'user_name',
+                key: 'user_name',
                 align: 'center',
             },
             {
@@ -179,25 +187,12 @@ class user_list extends Component {
                 align: 'center',
             },
             {
-                title: '会员类型',
-                key: 'car_type',
-                dataIndex: 'car_type',
-                align: 'center',
-            },
-            {
-                title: '上次洗车时间',
-                key: 'last_time',
-                dataIndex: 'last_time',
-                align: 'center',
-            },
-            {
                 title: '操作',
                 key: 'ctrl',
                 dataIndex: 'ctrl',
                 align: 'center',
                 render: (text, record) => (
                     <span>
-                        <Button type="link"  onClick={(e) => this.washCar(e,record)} className="g-btn-edit" >洗车</Button>
                         <Button type="link"  onClick={(e) => this.editCar(e,record)} className="g-btn-edit" >编辑</Button>
                         <Button type="link" onClick={(e)=> this.deleteCar(e,record)} className="g-btn-del" >删除</Button>
                     </span>
@@ -206,20 +201,10 @@ class user_list extends Component {
         ];
         return (
             <div className="g-body">
-                <div className="g-h-40"></div>
                 <Card hoverable className="g-card">
                     <div className="g-card-head">
                         <Icon type="profile" />
                     </div>
-                    <div className="g-text-right">
-                        <Button
-                            type="primary"
-                            icon="plus"
-                            loading={this.state.iconLoading}
-                            onClick={this.createCar}
-                        >
-                            &nbsp;&nbsp;新增
-                        </Button></div>
                     <div className="g-text-right g-m-20"><Input className="g-input" placeholder="Basic usage" onInput={this.setWords.bind(this)} /><Button className="g-search" shape="circle" icon="search" onClick={this.getList.bind(this)} /></div>
                     <div className="g-h-40"></div>
                     <Table loading={this.state.loading} 

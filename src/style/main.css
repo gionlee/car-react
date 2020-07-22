@@ -123,3 +123,21 @@
 .g-city-input {
     width: 120px !important;
 }
+.g-logo {
+    background: #001529;
+    padding: 8px;
+}
+.g-mini-logo {
+    width: 60px;
+    height: 40px;
+    padding: 10px;
+    background: #001529;
+    box-sizing: content-box;
+}
+.g-logo-img {
+    width: 100%;
+    height: 100%;
+}
+.ant-menu-vertical .ant-menu-item,.ant-menu-inline .ant-menu-item {
+    margin-top: 0 !important;
+}

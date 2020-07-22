@@ -1,4 +1,4 @@
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Layout, Menu, Breadcrumb, Icon,Dropdown } from 'antd';
 import cookie from 'react-cookies'
 import React, { Component } from 'react';
@@ -7,6 +7,9 @@ import car_details from './components/car/details';
 import car_create from './components/car/create';
 import car_edit from './components/car/edit';
 import user_list from './components/user/list';
+import user_details from './components/user/details'
+import user_edit from './components/user/edit'
+import { compose } from 'redux';
 const { Content, Header, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 let breadcrumb_tag = '';
@@ -29,8 +32,9 @@ class _Layout extends Component {
     componentDidMount () {
         this.setRouterName(this.props.match.url,this.router_name)
     }
-    setRouterName = (url,router_name) => {
+    setRouterName = (url,router_name,from_menu) => {
         let c_router_name = ''
+        
         switch (url.split('/')[2]) {
             case 'details':
                 c_router_name = '详情';
@@ -38,9 +42,17 @@ class _Layout extends Component {
             case 'create':
                 c_router_name = '新增';
                 break;
+            case 'edit':
+                c_router_name = '编辑';
+                break;
             default:
                 c_router_name = '';
                 break;
+        }
+        if(from_menu) {
+            this.setState({
+                router_link:url
+            })
         }
         this.setState({
             c_router_name: c_router_name,
@@ -107,7 +119,9 @@ class _Layout extends Component {
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-                    <div className="logo" />
+                    <div className={!this.state.collapsed ? "g-logo" : "g-mini-logo"} >
+                        <img className="g-logo-img " src={!this.state.collapsed ? require('../assets/images/logo.jpg') : require('../assets/images/mini-logo.jpg')} />
+                    </div>
                     <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
                         <Menu.Item key="1" onClick={this.setRouterName.bind(this, '/car/list','车辆列表')}>
                             <Icon type="pie-chart" />
@@ -137,11 +151,14 @@ class _Layout extends Component {
                         {this.state.c_router_name ? breadcrumb_tags : breadcrumb_tag}
 
                         <Switch>
-                            <Route path={`/car/list`} component={car_list} />
+                            <Route path={`/car/list`} component={car_list} exact />
                             <Route path={`/car/details/:id`} component={car_details} />
                             <Route path={`/car/create`} component={car_create} />
                             <Route path={`/car/edit/:id`} component={car_edit} />
                             <Route path={`/user/list`} component={user_list} />
+                            <Route path={`/user/details/:id`} component={user_details} />
+                            <Route path={`/user/edit/:id`} component={user_edit} />
+                            <Redirect from={`/`} to={`/car/list`} />
                         </Switch>
 
                     </Content>

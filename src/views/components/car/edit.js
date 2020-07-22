@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 import carCityType from '../../../utils/carCityType'
-import carType from '../../../utils/carType'
+import {carType} from '../../../utils/carType'
 const { Option } = Select;
 const formItemLabelCol = {
     labelCol: {
@@ -42,6 +42,7 @@ class car_edit extends Component {
         let id = this.props.match.params.id
         axios.get(api.carDetails+ '?id='+id).then( (res) => {
             if(res.data.code == 0) {
+                res.data.info.id = id
                 this.setState({
                     car_edit: res.data.info,
                     loading:false

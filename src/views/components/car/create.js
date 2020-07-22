@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 import carCityType from '../../../utils/carCityType'
-import carType from '../../../utils/carType'
+import {carType} from '../../../utils/carType'
 const { Option } = Select;
 const formItemLabelCol = {
     labelCol: {
