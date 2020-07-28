@@ -1,7 +1,9 @@
 import axios from 'axios';
 import qs from 'qs';
 import cookie from 'react-cookies';
-axios.defaults.baseURL = 'http://localhost:2020/api/';
+// axios.defaults.baseURL = '';
+axios.defaults.baseURL = 'http://www.gionlee.com:2020/api/';
+
 axios.defaults.timeout = 100000;
 axios.defaults.withCredentials = true; // 允许写入cookies 、 session 等
 // axios拦截器
@@ -25,7 +27,7 @@ axios.interceptors.response.use(response => {
      }
      if (response.data.code == -1) {
        
-       window.location.href = window.location.origin + '/#/login';
+       window.location.href = window.location.origin + window.location.pathname + '#/login';
      }
      
      return response

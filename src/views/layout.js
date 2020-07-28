@@ -123,14 +123,14 @@ class _Layout extends Component {
                         <img className="g-logo-img " src={!this.state.collapsed ? require('../assets/images/logo.jpg') : require('../assets/images/mini-logo.jpg')} />
                     </div>
                     <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                        <Menu.Item key="1" onClick={this.setRouterName.bind(this, '/car/list','车辆列表')}>
+                        <Menu.Item key="1" onClick={this.setRouterName.bind(this, '/car/list','车辆管理')}>
                             <Icon type="pie-chart" />
-                            <span>车辆列表</span>
+                            <span>车辆管理</span>
                         </Menu.Item>
                     
-                        <Menu.Item key="2" onClick={this.setRouterName.bind(this, '/user/list','用户列表')}>
+                        <Menu.Item key="2" onClick={this.setRouterName.bind(this, '/user/list','用户管理')}>
                             <Icon type="team" />
-                            <span>用户列表</span>
+                            <span>用户管理</span>
                         </Menu.Item>
                         </Menu>
                 </Sider>
@@ -158,7 +158,10 @@ class _Layout extends Component {
                             <Route path={`/user/list`} component={user_list} />
                             <Route path={`/user/details/:id`} component={user_details} />
                             <Route path={`/user/edit/:id`} component={user_edit} />
-                            <Redirect from={`/`} to={`/car/list`} />
+                            <Route path="*">
+                                <Redirect to={`/login`} />
+                            </Route>
+                            
                         </Switch>
 
                     </Content>
