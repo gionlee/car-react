@@ -47,6 +47,7 @@ class Login extends React.Component {
             }
             sessionStorage.setItem('user_id',res.data.id)
             sessionStorage.setItem('user_name',this.state.userInfo.username)
+            sessionStorage.setItem('real_name',res.data.real_name)
             message.success(res.message, 1.5).then( () => {
                 this.props.history.push('/car/list')
             })

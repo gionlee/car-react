@@ -25,7 +25,7 @@ class _Layout extends Component {
             router_name: '车辆列表',
             c_router_name: '',
             visible:false,
-            
+            real_name:sessionStorage.getItem('real_name'),
             edit_password_info:{
                 user_name:sessionStorage.getItem('user_name'),
                 password:'',
@@ -182,7 +182,7 @@ class _Layout extends Component {
                             <img src={require('../assets/images/user.jpg') } />
                             </div>
                             <div className="g-username">
-                                admin
+                                {this.state.real_name}
                             </div>
                         </div>
                     </Dropdown>
