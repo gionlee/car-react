@@ -1,5 +1,5 @@
 import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { Layout, Menu, Breadcrumb, Icon,Dropdown } from 'antd';
+import { Layout, Menu,Form, Input, Button, Breadcrumb, Icon,Dropdown, Modal,message} from 'antd';
 import cookie from 'react-cookies'
 import React, { Component } from 'react';
 import car_list from './components/car/list';
@@ -9,6 +9,8 @@ import car_edit from './components/car/edit';
 import user_list from './components/user/list';
 import user_details from './components/user/details'
 import user_edit from './components/user/edit'
+import api from '../utils/api';
+import {GET,POST,PUT,DELETE} from '../utils/http';
 import { compose } from 'redux';
 const { Content, Header, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -21,7 +23,14 @@ class _Layout extends Component {
             collapsed: false,
             router_link: '/car/list',
             router_name: '车辆列表',
-            c_router_name: ''
+            c_router_name: '',
+            visible:false,
+            
+            edit_password_info:{
+                user_name:sessionStorage.getItem('user_name'),
+                password:'',
+                new_password:''
+            }
 
         }
 
@@ -74,6 +83,37 @@ class _Layout extends Component {
             this.setRouterName(netxProps.location.pathname,this.router_name)
         }
     }
+    setEditPassword = (e) => {
+        this.setState({edit_password_info:Object.assign({}, this.state.edit_password_info, { password: e.target.value })})
+    }
+    setEditNewPassword = (e) => {
+        this.setState({edit_password_info:Object.assign({}, this.state.edit_password_info, { new_password: e.target.value })})
+    }
+    editPassword = () => {
+        this.setState({
+            visible:true
+        })
+    }
+    cancelEditPassword = () => {
+        this.setState({
+            visible:false
+        })
+    }
+     saveEditPassword = async() => {
+        let data = this.state.edit_password_info
+        data.id = sessionStorage.getItem('user_id')
+        let res  = await POST(api.editPassword,data)
+        if(res.result) {
+            message.success(res.message,1.5,() => {
+                    this.setState({
+                        visible: false
+                    })
+                });
+            
+        } else {
+            message.error(res.message);
+        }
+    }
     logout = ()=> {
         cookie.remove('token')
         this.props.history.push('/login')
@@ -105,9 +145,9 @@ class _Layout extends Component {
         const user = (
             <Menu>
             <Menu.Item>
-              <a target="_blank" rel="noopener noreferrer" href="/">
+              <div onClick={this.editPassword.bind(this)}>
                 修改密码
-              </a>
+              </div>
             </Menu.Item>
             <Menu.Item>
               <div onClick={this.logout.bind(this)}>
@@ -166,7 +206,43 @@ class _Layout extends Component {
 
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+                    <Modal
+                    title="修改密码"
+                    visible={this.state.visible}
+                    cancelText="取消"
+                    okText="提交"
+                    onCancel={this.cancelEditPassword.bind(this)}
+                    maskClosable={false}
+                    onOk={this.saveEditPassword.bind(this)}
+                    >
+                        <Form
+                            name="basic"
+                        >
+                            <Form.Item
+                                label="用户名"
+                                name="username"
+                            >
+                                <Input  value={this.state.edit_password_info.user_name} readOnly />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="密码"
+                                name="password"
+                                rules={[{ required: true, message: '请输入密码!' }]}
+                            >
+                                <Input.Password onInput={this.setEditPassword.bind(this)} value={this.state.edit_password_info.password} />
+                            </Form.Item>
+                            <Form.Item
+                                label="新密码"
+                                name="password"
+                                rules={[{ required: true, message: '请输入新密码!' }]}
+                            >
+                                <Input.Password onInput={this.setEditNewPassword.bind(this)} value={this.state.edit_password_info.new_password} />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
                 </Layout>
+
             </Layout>
         )
     }

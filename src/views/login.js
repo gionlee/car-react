@@ -42,10 +42,11 @@ class Login extends React.Component {
         let res = await POST(api.userLogin,data)
         if(res.result) {
             if(this.state.rememberPw) {
-                let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'999999d'})
+                let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'1d'})
                 cookie.save('user_token',user_token)
             }
             sessionStorage.setItem('user_id',res.data.id)
+            sessionStorage.setItem('user_name',this.state.userInfo.username)
             message.success(res.message, 1.5).then( () => {
                 this.props.history.push('/car/list')
             })

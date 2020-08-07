@@ -8,7 +8,8 @@ const apis = {
     deleteCar: 'car/delete',
     userList:'user/list',
     userDetails:'user/details',
-    userEdit: 'user/edit'
+    userEdit: 'user/edit',
+    editPassword: 'user/password'
 }
 
 export default apis;
