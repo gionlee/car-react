@@ -9,7 +9,13 @@ const apis = {
     userList:'user/list',
     userDetails:'user/details',
     userEdit: 'user/edit',
-    editPassword: 'user/password'
+    editPassword: 'user/password',
+    roleList:'role/list',
+    roleDetails:'role/details',
+    roleCreate:'role/create',
+    roleEdit:'role/edit',
+    deleteRole:'role/delete'
+
 }
 
 export default apis;

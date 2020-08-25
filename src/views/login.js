@@ -40,6 +40,9 @@ class Login extends React.Component {
             canAgain: false
         })
         let res = await POST(api.userLogin,data)
+        this.setState({
+            canAgain: true
+        })
         if(res.result) {
             if(this.state.rememberPw) {
                 let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'1d'})
@@ -48,6 +51,7 @@ class Login extends React.Component {
             sessionStorage.setItem('user_id',res.data.id)
             sessionStorage.setItem('user_name',this.state.userInfo.username)
             sessionStorage.setItem('real_name',res.data.real_name)
+            sessionStorage.setItem('role_id',res.data.role_id)
             message.success(res.message, 1.5).then( () => {
                 this.props.history.push('/car/list')
             })

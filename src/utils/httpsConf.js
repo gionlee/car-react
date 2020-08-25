@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import cookie from 'react-cookies';
+import { message } from 'antd';
 axios.defaults.baseURL = 'http://localhost:2020/api/';
 // axios.defaults.baseURL = 'http://www.gionlee.com:2020/api/';
 
@@ -26,10 +27,14 @@ axios.interceptors.response.use(response => {
       cookie.save('token', response.data.token, { path: '/' })
      }
      if (response.data.code == -1) {
+      message.error(response.data.message,1.5,()=> {
+        window.location.href = window.location.origin + window.location.pathname + '#/login';
+      })
        
-       window.location.href = window.location.origin + window.location.pathname + '#/login';
      }
-     
+     if(response.data.code != 0) {
+       message.error(response.data.message,1.5)
+     }
      return response
    }else {
      // 非200请求报错

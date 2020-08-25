@@ -9,6 +9,11 @@ import car_edit from './components/car/edit';
 import user_list from './components/user/list';
 import user_details from './components/user/details'
 import user_edit from './components/user/edit'
+import role_list from './components/role/list'
+import role_create from './components/role/create';
+import role_details from './components/role/details';
+import role_edit from './components/role/edit';
+import not_found from './components/not_found/404'
 import api from '../utils/api';
 import {GET,POST,PUT,DELETE} from '../utils/http';
 import { compose } from 'redux';
@@ -30,7 +35,8 @@ class _Layout extends Component {
                 user_name:sessionStorage.getItem('user_name'),
                 password:'',
                 new_password:''
-            }
+            },
+            defaultView:'1'
 
         }
 
@@ -43,7 +49,23 @@ class _Layout extends Component {
     }
     setRouterName = (url,router_name,from_menu) => {
         let c_router_name = ''
-        
+        let defaultView = '1'
+        switch (url.split('/')[1]) {
+            case 'car':
+                router_name = '车辆列表';
+                break;
+            case 'user':
+                router_name = '用户列表';
+                defaultView = '2'
+                break;
+            case 'role':
+                router_name = '角色列表';
+                defaultView = '3'
+                break;
+            default:
+                router_name = '车辆列表';
+                break;
+        }
         switch (url.split('/')[2]) {
             case 'details':
                 c_router_name = '详情';
@@ -65,6 +87,7 @@ class _Layout extends Component {
         }
         this.setState({
             c_router_name: c_router_name,
+            defaultView:defaultView
         })
         if(router_name) {
             this.setState({
@@ -162,15 +185,19 @@ class _Layout extends Component {
                     <div className={!this.state.collapsed ? "g-logo" : "g-mini-logo"} >
                         <img className="g-logo-img " src={!this.state.collapsed ? require('../assets/images/logo.jpg') : require('../assets/images/mini-logo.jpg')} />
                     </div>
-                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                    <Menu theme="dark" selectedKeys={[this.state.defaultView]} mode="inline">
                         <Menu.Item key="1" onClick={this.setRouterName.bind(this, '/car/list','车辆管理')}>
                             <Icon type="pie-chart" />
                             <span>车辆管理</span>
                         </Menu.Item>
                     
                         <Menu.Item key="2" onClick={this.setRouterName.bind(this, '/user/list','用户管理')}>
-                            <Icon type="team" />
+                            <Icon type="user" />
                             <span>用户管理</span>
+                        </Menu.Item>
+                        <Menu.Item key="3" onClick={this.setRouterName.bind(this, '/role/list','角色管理')}>
+                            <Icon type="team" />
+                            <span>角色管理</span>
                         </Menu.Item>
                         </Menu>
                 </Sider>
@@ -198,10 +225,13 @@ class _Layout extends Component {
                             <Route path={`/user/list`} component={user_list} />
                             <Route path={`/user/details/:id`} component={user_details} />
                             <Route path={`/user/edit/:id`} component={user_edit} />
+                            <Route path={`/role/list`} component={role_list} />
+                            <Route path={`/role/create`} component={role_create} />
+                            <Route path={`/role/details/:id`} component={role_details} />
+                            <Route path={`/role/edit/:id`} component={role_edit} />
                             <Route path="*">
-                                <Redirect to={`/login`} />
+                                <Redirect to={`/login`}/>
                             </Route>
-                            
                         </Switch>
 
                     </Content>
