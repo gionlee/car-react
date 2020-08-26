@@ -13,6 +13,8 @@ import role_list from './components/role/list'
 import role_create from './components/role/create';
 import role_details from './components/role/details';
 import role_edit from './components/role/edit';
+import staff_list from './components/staff/list';
+import staff_create from './components/staff/create'
 import not_found from './components/not_found/404'
 import api from '../utils/api';
 import {GET,POST,PUT,DELETE} from '../utils/http';
@@ -61,6 +63,10 @@ class _Layout extends Component {
             case 'role':
                 router_name = '角色列表';
                 defaultView = '3'
+                break;
+            case 'staff':
+                router_name = '员工管理';
+                defaultView = '4'
                 break;
             default:
                 router_name = '车辆列表';
@@ -199,6 +205,10 @@ class _Layout extends Component {
                             <Icon type="team" />
                             <span>角色管理</span>
                         </Menu.Item>
+                        <Menu.Item key="4" onClick={this.setRouterName.bind(this, '/staff/list','员工管理')}>
+                            <Icon type="team" />
+                            <span>员工管理</span>
+                        </Menu.Item>
                         </Menu>
                 </Sider>
                 <Layout>
@@ -229,6 +239,8 @@ class _Layout extends Component {
                             <Route path={`/role/create`} component={role_create} />
                             <Route path={`/role/details/:id`} component={role_details} />
                             <Route path={`/role/edit/:id`} component={role_edit} />
+                            <Route path={`/staff/list`} component={staff_list} />
+                            <Route path={`/staff/create`} component={staff_create} />
                             <Route path="*">
                                 <Redirect to={`/login`}/>
                             </Route>

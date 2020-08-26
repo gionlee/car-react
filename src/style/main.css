@@ -120,6 +120,9 @@
 .g-city {
     width: 80px !important;
 }
+.g-role {
+    min-width:200px !important ;
+}
 .g-city-input {
     width: 120px !important;
 }

@@ -14,8 +14,9 @@ const apis = {
     roleDetails:'role/details',
     roleCreate:'role/create',
     roleEdit:'role/edit',
-    deleteRole:'role/delete'
-
+    roleDelete:'role/delete',
+    staffList:'staff/list',
+    staffCheck:'staff/check'
 }
 
 export default apis;

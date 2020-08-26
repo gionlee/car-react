@@ -31,8 +31,7 @@ axios.interceptors.response.use(response => {
         window.location.href = window.location.origin + window.location.pathname + '#/login';
       })
        
-     }
-     if(response.data.code != 0) {
+     }else if(response.data.code != 0) {
        message.error(response.data.message,1.5)
      }
      return response

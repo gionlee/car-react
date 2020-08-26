@@ -56,11 +56,11 @@ class Login extends React.Component {
                 this.props.history.push('/car/list')
             })
         } else {
-            message.error(res.message, 1.5).then( ()=> {
+            setTimeout( ()=> {
                 this.setState({
                     canAgain: true
                 })
-            })
+            },1500)
         }
     }
     setUsername = (e) => {

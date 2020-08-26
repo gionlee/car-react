@@ -1,7 +1,7 @@
 import { Icon, Input, Card,Button,Select, Form, DatePicker, InputNumber,message } from 'antd';
 import moment from 'moment';
 import React, { Component } from 'react';
-import axios from '../../../utils/httpsConf';
+import {GET,POST,PUT,DELETE} from '../../../utils/http';
 import api from '../../../utils/api';
 import carCityType from '../../../utils/carCityType'
 import {carType} from '../../../utils/carType'
@@ -70,23 +70,15 @@ class car_create extends Component {
     setRealName =(e) => {
         this.setState({car_create:Object.assign({}, this.state.car_create, { real_name: e.target.value })})
     }
-    createCar = () => {
+    createCar = async () => {
         let data = this.state.car_create
-        data.register = new Date(data.register)
-        axios.post(api.createCar,this.state.car_create).then( (res) => {
-            console.log(res)
-            if(res.data.code == 0) {
-                message.success('提交成功！',1.5).then( ()=> {
-                    this.props.history.push('/car/list')
-                })
-            } else {
-                alert(res.data.msg);
-            }
-            
-        }).catch( (err) => {
-            console.log(err)
-        })
-        
+        data.register = new Date(data.register).toUTCString()
+        let res = await POST(api.createCar,this.state.car_create)
+        if(res.code == 0) {
+            message.success('提交成功！',1.5).then( ()=> {
+                this.props.history.push('/car/list')
+            })
+        } 
     }
     goBack = () => {
         this.props.history.push('/car/list')

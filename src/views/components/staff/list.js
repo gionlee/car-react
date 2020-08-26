@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import axios from '../../../utils/httpsConf';
 import api from '../../../utils/api';
 // import axios from 'axios';
-class user_list extends Component {
+class staff_list extends Component {
     constructor(props) {
         super(props);
         this.input = React.createRef();
@@ -23,7 +23,7 @@ class user_list extends Component {
                 current:1,
                 pageSize:10,
             },
-            role_list:[],
+            staff_list:[],
             word:'',  
         }
     }
@@ -32,7 +32,7 @@ class user_list extends Component {
     }
     getList = ()=> {
         axios({
-            url:api.roleList,
+            url:api.staffList,
             method:'get',
             params:{
                 word:this.state.word,
@@ -43,10 +43,11 @@ class user_list extends Component {
         }).then( (res) => {
             if(res.data.result) {
                 let list = res.data.data
+                console.log(list)
                 const pager = { ...this.state.pagination };
                 pager.total = res.data.total
                 this.setState ({
-                    role_list:list,
+                    staff_list:list,
                     loading: false,
                     pagination:pager
                 })
@@ -59,16 +60,16 @@ class user_list extends Component {
     toDetails = (e,record) => {
             this.props.history.push('details/'+record.role_id);
     }
-    createRole = (record) => {
+    createStaff = (record) => {
         this.props.history.push('create');
     }
-    editRole = (e,record) => {
+    editStaff = (e,record) => {
         console.log(record)
         e.stopPropagation()
 
         this.props.history.push('edit/'+record.role_id);
     }
-    deleteRole = (e,record) => {
+    deleteStaff = (e,record) => {
         console.log(record)
         this.setState({
             role_id:record.role_id,
@@ -81,7 +82,7 @@ class user_list extends Component {
         this.setState({
             loading:true
         })
-        axios.post(api.roleDelete,{id:this.state.role_id}).then( (res) => {
+        axios.post(api.deleteRole,{id:this.state.role_id}).then( (res) => {
             if(res.data.code == '0') {
                 this.setState({delete_visible:false})
                 message.success('删除成功！',1.5).then( ()=> {      
@@ -109,18 +110,23 @@ class user_list extends Component {
         this.getList()
     }
     render() {
-        const columns = [
+        const columns = [{
+                title:'账号',
+                dataIndex:'user_name',
+                key:'user_name',
+                align:'left'
+            },
             {
-                title: '角色名称',
-                dataIndex: 'role_name',
-                key: 'role_name',
+                title: '姓名',
+                dataIndex: 'real_name',
+                key: 'real_name',
                 align: 'center',
             },
             {
-                title: '权限名',
-                dataIndex: 'permission_name',
-                key: 'permission_name',
-                align: 'left',
+                title: '职位',
+                dataIndex: 'role_name',
+                key: 'role_name',
+                align: 'center',
                 render:(text,record) => (
                 <div>{text.toString()}</div>
                 )
@@ -152,7 +158,7 @@ class user_list extends Component {
                             type="primary"
                             icon="plus"
                             loading={this.state.iconLoading}
-                            onClick={this.createRole}
+                            onClick={this.createStaff}
                         >
                             &nbsp;&nbsp;新增
                         </Button>
@@ -167,7 +173,7 @@ class user_list extends Component {
                         }}
                         pagination={this.state.pagination}
                         onChange={this.setPageIndex.bind(this)}
-                        columns={columns} dataSource={this.state.role_list} rowKey="role_id" />
+                        columns={columns} dataSource={this.state.staff_list} rowKey="role_id" />
                 </Card>
                 <Modal
                     title="提示"
@@ -185,4 +191,4 @@ class user_list extends Component {
         );
     }
 }
-export default user_list;
+export default staff_list;
