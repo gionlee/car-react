@@ -8,16 +8,7 @@ class staff_list extends Component {
         super(props);
         this.input = React.createRef();
         this.state = {
-            visible: false,
-            bubb: true,
-            count: 0,
-            surplus: '',
-            remarks: '',
-            carId: 0,
-            newSurplus: '',
             delete_visible: false,
-            car_number:'',
-
             loading:true,
             pagination: {
                 current:1,
@@ -25,6 +16,10 @@ class staff_list extends Component {
             },
             staff_list:[],
             word:'',  
+            visible:false,
+            staff_info:{},
+            new_password:'',
+            my_level:sessionStorage.getItem('role_level') || 999
         }
     }
     componentWillMount () {
@@ -64,10 +59,20 @@ class staff_list extends Component {
         this.props.history.push('create');
     }
     editStaff = (e,record) => {
-        console.log(record)
+        sessionStorage.setItem('staff_login_name',record.login_name)
+        sessionStorage.setItem('staff_real_name',record.real_name)
+        sessionStorage.setItem('staff_role_id',record.role_id)
+        sessionStorage.setItem('staff_id',record.id)
+        this.props.history.push('edit');
         e.stopPropagation()
-
-        this.props.history.push('edit/'+record.role_id);
+    }
+    editPawword = (e,record) => {
+        console.log(record)
+        this.setState({
+            visible: true,
+            staff_info:record
+        })
+        e.stopPropagation()
     }
     deleteStaff = (e,record) => {
         console.log(record)
@@ -109,11 +114,32 @@ class staff_list extends Component {
         });
         this.getList()
     }
+    cancelEditPassword = () => {
+        this.setState({
+            visible:false
+        })
+    }
+    saveEditPassword =() => {
+        axios.post(api.staffPassword,{id:this.state.staff_info.id,new_password:this.state.new_password}).then((res) => {
+            if(res.data.code == 0) {
+                message.success(res.data.message,1.5,()=> {
+                    this.getList()
+                })
+            }
+        }).catch((err) => {
+            
+        });
+    }
+    setEditNewPassword =(e) => {
+        this.setState({
+            new_password:e.target.value
+        })
+    }
     render() {
         const columns = [{
                 title:'账号',
-                dataIndex:'user_name',
-                key:'user_name',
+                dataIndex:'login_name',
+                key:'login_name',
                 align:'left'
             },
             {
@@ -137,10 +163,12 @@ class staff_list extends Component {
                 dataIndex: 'ctrl',
                 align: 'center',
                 render: (text, record) => (
-                    <span>
-                        <Button type="link"  onClick={(e) => this.editRole(e,record)} className="g-btn-edit" >编辑</Button>
+                    record.role_level > this.state.my_level ? (<span>                        
+                        <Button type="link"  onClick={(e) => this.editStaff(e,record)} className="g-btn-edit" >编辑</Button>
+                        <Button type="link"  onClick={(e) => this.editPawword(e,record)} className="g-btn-edit" >修改密码</Button>
                         <Button type="link" onClick={(e)=> this.deleteRole(e,record)} className="g-btn-del" >删除</Button>
-                    </span>
+                    </span>) : ''
+                    
                 ),
             }
         ];
@@ -173,7 +201,7 @@ class staff_list extends Component {
                         }}
                         pagination={this.state.pagination}
                         onChange={this.setPageIndex.bind(this)}
-                        columns={columns} dataSource={this.state.staff_list} rowKey="role_id" />
+                        columns={columns} dataSource={this.state.staff_list} rowKey="id" />
                 </Card>
                 <Modal
                     title="提示"
@@ -187,6 +215,33 @@ class staff_list extends Component {
                     >
                     <p>确认删除？</p>
                 </Modal>
+                <Modal
+                    title="修改密码"
+                    visible={this.state.visible}
+                    cancelText="取消"
+                    okText="提交"
+                    onCancel={this.cancelEditPassword.bind(this)}
+                    maskClosable={false}
+                    onOk={this.saveEditPassword.bind(this)}
+                    >
+                        <Form
+                            name="basic"
+                        >
+                            <Form.Item
+                                label="账号"
+                                name="logion_name"
+                            >
+                                <Input  value={this.state.staff_info.login_name} readOnly />
+                            </Form.Item>
+                            <Form.Item
+                                label="新密码"
+                                name="password"
+                                rules={[{ required: true, message: '请输入新密码!' }]}
+                            >
+                                <Input.Password onInput={this.setEditNewPassword.bind(this)} value={this.state.new_password} />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
             </div>
         );
     }

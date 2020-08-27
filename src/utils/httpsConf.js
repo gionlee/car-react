@@ -26,7 +26,7 @@ axios.interceptors.response.use(response => {
      if (response.data.token) {
       cookie.save('token', response.data.token, { path: '/' })
      }
-     if (response.data.code == -1) {
+     if (response.data.code == 422) {
       message.error(response.data.message,1.5,()=> {
         window.location.href = window.location.origin + window.location.pathname + '#/login';
       })

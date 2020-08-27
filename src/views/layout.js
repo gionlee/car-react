@@ -15,6 +15,7 @@ import role_details from './components/role/details';
 import role_edit from './components/role/edit';
 import staff_list from './components/staff/list';
 import staff_create from './components/staff/create'
+import staff_edit from './components/staff/edit';
 import not_found from './components/not_found/404'
 import api from '../utils/api';
 import {GET,POST,PUT,DELETE} from '../utils/http';
@@ -241,6 +242,7 @@ class _Layout extends Component {
                             <Route path={`/role/edit/:id`} component={role_edit} />
                             <Route path={`/staff/list`} component={staff_list} />
                             <Route path={`/staff/create`} component={staff_create} />
+                            <Route path={`/staff/edit`} component={staff_edit} />
                             <Route path="*">
                                 <Redirect to={`/login`}/>
                             </Route>

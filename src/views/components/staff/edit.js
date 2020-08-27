@@ -7,10 +7,11 @@ class staff_create extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            login_name :'',
-            real_name:'',
+            login_name :sessionStorage.getItem('staff_login_name'),
+            real_name:sessionStorage.getItem('staff_real_name'),
             role_list:[],
-            role_id:'',
+            role_id:sessionStorage.getItem('staff_role_id'),
+            staff_id:sessionStorage.getItem('staff_id'),
             canSubmit:true
         }
     }
@@ -24,10 +25,10 @@ class staff_create extends Component {
             login_name:e.target.value
         })
     }
-    createStaff =() => {
-        axios.post(api.staffCreate,{
+    editStaff =() => {
+        axios.post(api.staffEdit,{
             role_id:this.state.role_id,
-            login_name:this.state.login_name,
+            staff_id:this.state.staff_id,
             real_name:this.state.real_name
         }).then((res) => {
             if(res.data.code == 0) {
@@ -68,21 +69,6 @@ class staff_create extends Component {
             
         });
     }
-    checkLoginName =() => {
-        axios.get(api.staffCheck+'?login_name='+this.state.login_name).then((res) => {
-            if(res.data.code != 0) {
-                this.setState({
-                    canSubmit:false
-                })
-            } else {
-                this.setState({
-                    canSubmit:true
-                })
-            }
-        }).catch((err) => {
-            
-        });
-    }
     goBack = () => {
         this.props.history.push('/staff/list')
     }
@@ -97,7 +83,7 @@ class staff_create extends Component {
                 <div className="g-h-40"></div>
                 <Form layout="inline">
                     <Form.Item label="账号">
-                        <Input className="g-input g-text-left" onBlur={this.checkLoginName} value={this.state.login_name} onInput={this.setLoginName.bind(this)} />
+                        <Input className="g-input g-text-left" readOnly value={this.state.login_name}/>
                     </Form.Item>
                     <Form.Item label="真实姓名">
                         <Input className="g-input g-text-left" value={this.state.real_name} onInput={this.setRealName.bind(this)} />
@@ -110,7 +96,7 @@ class staff_create extends Component {
                 </Form>
                 <div className="g-ctrl">
                 <Button  onClick={this.goBack}>返回</Button>
-                {this.state.canSubmit ? <Button className="g-submit" type="primary" onClick={this.createStaff}>保存</Button> : <Button className="g-submit" disabled >保存</Button>}
+                {this.state.canSubmit ? <Button className="g-submit" type="primary" onClick={this.editStaff}>保存</Button> : <Button className="g-submit" disabled >保存</Button>}
                 
                 </div>
             </Card>
