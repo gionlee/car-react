@@ -1,5 +1,5 @@
 const apis = {
-    userLogin: '/user/login', // 用户登录
+    staffLogin: '/staff/login', // 用户登录
     carList: 'car/list',  // 获取车辆列表
     createCar: 'car/create',  // 新增
     editCar: 'car/edit',       // 编辑
@@ -19,7 +19,8 @@ const apis = {
     staffCheck:'staff/check',
     staffCreate:'staff/create',
     staffPassword:'staff/password',
-    staffEdit:'staff/edit'
+    staffEdit:'staff/edit',
+    staffDtails:'staff/details'
 }
 
 export default apis;

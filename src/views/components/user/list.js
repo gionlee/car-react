@@ -166,18 +166,12 @@ class user_list extends Component {
                 title: '注册时间',
                 dataIndex: 'create_time',
                 key: 'create_time',
-                align: 'center',
+                align: 'left',
             },
             {
                 title: '姓名',
                 dataIndex: 'real_name',
                 key: 'real_name',
-                align: 'center',
-            },
-            {
-                title: '登录用户名',
-                dataIndex: 'user_name',
-                key: 'user_name',
                 align: 'center',
             },
             {

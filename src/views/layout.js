@@ -16,7 +16,7 @@ import role_edit from './components/role/edit';
 import staff_list from './components/staff/list';
 import staff_create from './components/staff/create'
 import staff_edit from './components/staff/edit';
-import not_found from './components/not_found/404'
+import staff_details from './components/staff/details'
 import api from '../utils/api';
 import {GET,POST,PUT,DELETE} from '../utils/http';
 import { compose } from 'redux';
@@ -194,7 +194,7 @@ class _Layout extends Component {
                     </div>
                     <Menu theme="dark" selectedKeys={[this.state.defaultView]} mode="inline">
                         <Menu.Item key="1" onClick={this.setRouterName.bind(this, '/car/list','车辆管理')}>
-                            <Icon type="pie-chart" />
+                            <Icon type="car" />
                             <span>车辆管理</span>
                         </Menu.Item>
                     
@@ -203,7 +203,7 @@ class _Layout extends Component {
                             <span>用户管理</span>
                         </Menu.Item>
                         <Menu.Item key="3" onClick={this.setRouterName.bind(this, '/role/list','角色管理')}>
-                            <Icon type="team" />
+                            <Icon type="contacts" />
                             <span>角色管理</span>
                         </Menu.Item>
                         <Menu.Item key="4" onClick={this.setRouterName.bind(this, '/staff/list','员工管理')}>
@@ -243,6 +243,7 @@ class _Layout extends Component {
                             <Route path={`/staff/list`} component={staff_list} />
                             <Route path={`/staff/create`} component={staff_create} />
                             <Route path={`/staff/edit`} component={staff_edit} />
+                            <Route path={`/staff/details/:id`} component={staff_details} />
                             <Route path="*">
                                 <Redirect to={`/login`}/>
                             </Route>

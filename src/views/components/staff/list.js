@@ -53,7 +53,12 @@ class staff_list extends Component {
         })
     }
     toDetails = (e,record) => {
-            this.props.history.push('details/'+record.role_id);
+
+        sessionStorage.setItem('staff_login_name',record.login_name)
+        sessionStorage.setItem('staff_real_name',record.real_name)
+        sessionStorage.setItem('staff_role_id',record.role_id)
+        sessionStorage.setItem('staff_id',record.id)
+        this.props.history.push('details/'+record.id);
     }
     createStaff = (record) => {
         this.props.history.push('create');
@@ -196,7 +201,7 @@ class staff_list extends Component {
                     <Table loading={this.state.loading} 
                         onRow={(record) => {
                             return {
-                                onClick: event => { this.toDetails(event,record) },
+                                onClick: event => { record.role_level > this.state.my_level ? this.toDetails(event,record): console.log('无权限！') },
                             }
                         }}
                         pagination={this.state.pagination}

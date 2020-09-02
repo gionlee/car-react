@@ -39,7 +39,7 @@ class Login extends React.Component {
         this.setState({
             canAgain: false
         })
-        let res = await POST(api.userLogin,data)
+        let res = await POST(api.staffLogin,data)
         this.setState({
             canAgain: true
         })
