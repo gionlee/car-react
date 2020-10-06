@@ -43,16 +43,17 @@ class Login extends React.Component {
         this.setState({
             canAgain: true
         })
-        if(res.result) {
+        if(res.code == 0) {
             if(this.state.rememberPw) {
                 let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'1d'})
                 cookie.save('user_token',user_token)
             }
-            sessionStorage.setItem('user_id',res.data.id)
+            sessionStorage.setItem('user_id',res.data.info.id)
             sessionStorage.setItem('user_name',this.state.userInfo.username)
-            sessionStorage.setItem('real_name',res.data.real_name)
-            sessionStorage.setItem('role_id',res.data.role_id)
-            sessionStorage.setItem('role_level',res.data.role_level)
+            sessionStorage.setItem('real_name',res.data.info.real_name)
+            sessionStorage.setItem('role_id',res.data.info.role_id)
+            sessionStorage.setItem('role_level',res.data.info.role_level)
+            sessionStorage.setItem('permission',res.data.permission)
             message.success(res.message, 1.5).then( () => {
                 this.props.history.push('/car/list')
             })

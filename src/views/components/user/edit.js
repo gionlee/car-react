@@ -106,10 +106,6 @@ class user_edit extends Component {
                         <Form.Item label="姓名">
                             <Input className="g-input g-text-left" value={this.state.user_edit.real_name} onInput={this.setRealName.bind(this)}  />
                         </Form.Item>
-                        <Form.Item label="登录用户名">
-                            <Input className="g-input g-text-left" value={this.state.user_edit.user_name} onInput={this.setUserName.bind(this)}  disabled={ !!this.state.user_edit.user_name} />
-                        </Form.Item>
-                        <br />
                         <Form.Item label="联系方式">
                             <Input className="g-input g-text-left" value={this.state.user_edit.phone}  onInput={this.setPhone.bind(this)} />
                         </Form.Item>

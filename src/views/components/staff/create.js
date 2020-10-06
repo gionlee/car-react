@@ -40,7 +40,6 @@ class staff_create extends Component {
         });
     }
     setRealName = (e) => {
-        console.log(e)
         this.setState({
             real_name:e.target.value
         })

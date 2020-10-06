@@ -50,8 +50,8 @@ class car_edit extends Component {
             }
         })
     }
-    setRegister = (date, dateString) => {
-        this.setState({car_edit:Object.assign({}, this.state.car_edit, { create_time: dateString })})
+    setRegister = (e, value) => {
+        this.setState({car_edit:Object.assign({}, this.state.car_edit, { create_time: value })})
     }
     setCarNumber = (e) => {
         let value = e.target.value
@@ -87,7 +87,7 @@ class car_edit extends Component {
         this.setState({
             loading:true
         })
-        axios.post(api.editCar,this.state.car_edit).then( (res) => {
+        axios.post(api.carEdit,this.state.car_edit).then( (res) => {
             if(res.data.code == 0) {
                 
                 message.success('提交成功！',1.5).then( ()=> {

@@ -13,15 +13,15 @@ class car_list extends Component {
             count: 0,
             surplus: '',
             remarks: '洗车',
-            carId: 0,
-            newSurplus: '',
-            deleteVisible: false,
+            car_id: 0,
+            new_surplus: '',
+            delete_visible: false,
             loading:true,
             pagination: {
                 current:1,
                 pageSize:10,
             },
-            
+            permission_list:sessionStorage.getItem('permission').split(',') || [],
             word:'',  
         }
     }
@@ -71,8 +71,8 @@ class car_list extends Component {
     }
     deleteCar = (e,record) => {
         this.setState({
-            carId:record.id,
-            deleteVisible: true
+            car_id:record.id,
+            delete_visible: true
         })
         e.stopPropagation()
         
@@ -83,7 +83,7 @@ class car_list extends Component {
             visible: true,
             count:Number(record.count),
             surplus:Number(record.surplus),
-            carId:record.id
+            car_id:record.id
         })  
     }
     showTips = () => {
@@ -92,10 +92,10 @@ class car_list extends Component {
         })
     }
     setSurplus = (value) => {
-        this.setState({newSurplus:value,surplus:this.state.count - value})
+        this.setState({new_surplus:value,surplus:this.state.count - value})
     }
     handleOk = () => {
-        let data = {id:this.state.carId,count:this.state.newSurplus,surplus:this.state.surplus,remarks:this.state.remarks}
+        let data = {id:this.state.car_id,count:this.state.new_surplus,surplus:this.state.surplus,remarks:this.state.remarks}
         axios({
             url:'/car/wash',
             method:'post',
@@ -121,9 +121,9 @@ class car_list extends Component {
         
     }
     deleteHandleOk =(id)=> {
-        axios.post(api.deleteCar,{id:this.state.carId}).then( (res) => {
+        axios.post(api.carDelete,{id:this.state.car_id}).then( (res) => {
             if(res.data.code == '0') {
-                this.setState({deleteVisible:false})
+                this.setState({delete_visible:false})
                 message.success('删除成功！',1.5).then( ()=> {      
                     this.getList()
                 })      
@@ -134,14 +134,14 @@ class car_list extends Component {
     }
     deleteHandleCancel = () => {
         this.setState({
-            deleteVisible:false,
+            delete_visible:false,
         })
     }
     
     handleCancel = () => {
         this.setState({
             visible:false,
-            newSurplus: 1,
+            new_surplus: 1,
             remarks: '洗车'
         })
     }
@@ -202,8 +202,10 @@ class car_list extends Component {
                 render: (text, record) => (
                     <span>
                         <Button type="link"  onClick={(e) => this.washCar(e,record)} className="g-btn-edit" >洗车</Button>
-                        <Button type="link"  onClick={(e) => this.editCar(e,record)} className="g-btn-edit" >编辑</Button>
-                        <Button type="link" onClick={(e)=> this.deleteCar(e,record)} className="g-btn-del" >删除</Button>
+                        { this.state.permission_list.includes('1003') ? <Button type="link"  onClick={(e) => this.editCar(e,record)} className="g-btn-edit" >编辑</Button> : '' }
+                        { this.state.permission_list.includes('1004') ? <Button type="link" onClick={(e)=> this.deleteCar(e,record)} className="g-btn-del" >删除</Button> : '' }
+                        
+                        
                     </span>
                 ),
             }
@@ -218,14 +220,14 @@ class car_list extends Component {
                         <div className="g-inline-block g-pdr-100">
                         <Input className="g-input" placeholder="Basic usage" onInput={this.setWords.bind(this)} /><Button className="g-search" shape="circle" icon="search" onClick={this.getList.bind(this)} />
                         </div>
-                        <Button
+                        { this.state.permission_list.includes('1002') ? <Button
                             type="primary"
                             icon="plus"
                             loading={this.state.iconLoading}
                             onClick={this.createCar}
                         >
                             &nbsp;&nbsp;新增
-                        </Button>
+                        </Button> : ''}
                         <div className="g-text-right g-m-20"></div>    
                     </div>
                     
@@ -249,10 +251,10 @@ class car_list extends Component {
                     >
                     <Form>
                         <Form.Item label="耗费洗车次数">
-                        <InputNumber value={this.state.newSurplus} min={0} max={this.state.count}  onChange={this.setSurplus.bind(this)} className="g-input"  />
+                        <InputNumber value={this.state.new_surplus} min={0} max={this.state.count}  onChange={this.setSurplus.bind(this)} className="g-input"  />
                         </Form.Item>
                         <Form.Item label="剩余洗车次数">
-                        {this.state.count - this.state.newSurplus}
+                        {this.state.count - this.state.new_surplus}
                         </Form.Item>
                         <Form.Item label="备注">
                         <Input value={this.state.remarks}  onInput={this.setremarks.bind(this)} className="g-input"  />
@@ -261,7 +263,7 @@ class car_list extends Component {
                 </Modal>
                 <Modal
                     title="提示"
-                    visible={this.state.deleteVisible}
+                    visible={this.state.delete_visible}
                     onOk={this.deleteHandleOk}
                     onCancel={this.deleteHandleCancel}
                     maskClosable={false}

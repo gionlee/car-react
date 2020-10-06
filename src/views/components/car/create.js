@@ -5,6 +5,7 @@ import {GET,POST,PUT,DELETE} from '../../../utils/http';
 import api from '../../../utils/api';
 import carCityType from '../../../utils/carCityType'
 import {carType} from '../../../utils/carType'
+import axios from '../../../utils/httpsConf';
 const { Option } = Select;
 const formItemLabelCol = {
     labelCol: {
@@ -33,12 +34,13 @@ class car_create extends Component {
                 city:'冀B',
                 count: 0,
                 user_id:45
-            }
+            },
+            permission_list:sessionStorage.getItem('permission').split(',') || [],
         }
 
     }
-    setRegister = (date, dateString) => {
-        this.setState({car_create:Object.assign({}, this.state.car_create, { register: dateString })})
+    setRegister = (e, value) => {
+        this.setState({car_create:Object.assign({}, this.state.car_create, { register: value })})
     }
     setCarNumber = (e) => {
         this.setState({car_create:Object.assign({}, this.state.car_create, { car_number: e.target.value })})
@@ -73,12 +75,16 @@ class car_create extends Component {
     createCar = async () => {
         let data = this.state.car_create
         data.register = new Date(data.register).toUTCString()
-        let res = await POST(api.createCar,this.state.car_create)
-        if(res.code == 0) {
-            message.success('提交成功！',1.5).then( ()=> {
-                this.props.history.push('/car/list')
-            })
-        } 
+        axios.post(api.carCreate,this.state.car_create).then((res) => {
+            if(res.data.code == 0) {
+                message.success('提交成功！',1.5).then( ()=> {
+                    this.props.history.push('/car/list')
+                })
+            } else {
+                message.error(res.data.message,1.5)
+            }
+            
+        })
     }
     goBack = () => {
         this.props.history.push('/car/list')
@@ -130,7 +136,7 @@ class car_create extends Component {
                     </Form>
                     <div className="g-ctrl">
                     <Button  onClick={this.goBack}>返回</Button>
-                    <Button className="g-submit" type="primary" onClick={this.createCar}>保存</Button>
+                    {this.state.permission_list.includes('1002') ? <Button className="g-submit" type="primary" onClick={this.createCar}>保存</Button> : '' }
                     </div>
                 </Card>
             </div>

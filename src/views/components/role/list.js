@@ -10,11 +10,6 @@ class user_list extends Component {
         this.state = {
             visible: false,
             bubb: true,
-            count: 0,
-            surplus: '',
-            remarks: '',
-            carId: 0,
-            newSurplus: '',
             delete_visible: false,
             car_number:'',
 
@@ -63,13 +58,11 @@ class user_list extends Component {
         this.props.history.push('create');
     }
     editRole = (e,record) => {
-        console.log(record)
         e.stopPropagation()
 
         this.props.history.push('edit/'+record.role_id);
     }
     deleteRole = (e,record) => {
-        console.log(record)
         this.setState({
             role_id:record.role_id,
             delete_visible: true
@@ -89,7 +82,9 @@ class user_list extends Component {
                 })      
             }
         }).catch( (err) => {
-            console.log(err)
+            this.setState({
+                loading:false
+            })
         })
     }
     deleteHandleCancel = () => {

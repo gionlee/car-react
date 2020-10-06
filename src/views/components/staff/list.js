@@ -19,6 +19,7 @@ class staff_list extends Component {
             visible:false,
             staff_info:{},
             new_password:'',
+            staff_id:'',
             my_level:sessionStorage.getItem('role_level') || 999
         }
     }
@@ -82,7 +83,7 @@ class staff_list extends Component {
     deleteStaff = (e,record) => {
         console.log(record)
         this.setState({
-            role_id:record.role_id,
+            staff_id:record.id,
             delete_visible: true
         })
         e.stopPropagation()
@@ -92,7 +93,7 @@ class staff_list extends Component {
         this.setState({
             loading:true
         })
-        axios.post(api.deleteRole,{id:this.state.role_id}).then( (res) => {
+        axios.post(api.staffDelete,{id:this.state.staff_id}).then( (res) => {
             if(res.data.code == '0') {
                 this.setState({delete_visible:false})
                 message.success('删除成功！',1.5).then( ()=> {      
@@ -171,7 +172,7 @@ class staff_list extends Component {
                     record.role_level > this.state.my_level ? (<span>                        
                         <Button type="link"  onClick={(e) => this.editStaff(e,record)} className="g-btn-edit" >编辑</Button>
                         <Button type="link"  onClick={(e) => this.editPawword(e,record)} className="g-btn-edit" >修改密码</Button>
-                        <Button type="link" onClick={(e)=> this.deleteRole(e,record)} className="g-btn-del" >删除</Button>
+                        <Button type="link" onClick={(e)=> this.deleteStaff(e,record)} className="g-btn-del" >删除</Button>
                     </span>) : ''
                     
                 ),

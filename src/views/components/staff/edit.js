@@ -10,7 +10,7 @@ class staff_create extends Component {
             login_name :sessionStorage.getItem('staff_login_name'),
             real_name:sessionStorage.getItem('staff_real_name'),
             role_list:[],
-            role_id:sessionStorage.getItem('staff_role_id'),
+            role_id:Number(sessionStorage.getItem('staff_role_id')),
             staff_id:sessionStorage.getItem('staff_id'),
             canSubmit:true
         }
@@ -62,7 +62,7 @@ class staff_create extends Component {
                 })
             })
             this.setState({
-                role_id:list[0].role_id,
+                // role_id:list[0].role_id,
                 role_list:list
             })
         }).catch((err) => {

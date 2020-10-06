@@ -23,8 +23,8 @@ class user_list extends Component {
                 current:1,
                 pageSize:10,
             },
-            
-            word:'',  
+            word:'',
+            permission_list:sessionStorage.getItem('permission').split(',') || []  
         }
     }
     componentWillMount () {
@@ -66,26 +66,17 @@ class user_list extends Component {
     createCar = (record) => {
         this.props.history.push('create');
     }
-    editCar = (e,record) => {
+    editUser = (e,record) => {
         e.stopPropagation()
         this.props.history.push('edit/'+record.id);
     }
-    deleteCar = (e,record) => {
+    deleteUser = (e,record) => {
         this.setState({
             carId:record.id,
             deleteVisible: true
         })
         e.stopPropagation()
         
-    }
-    washCar = (e,record) => {
-        e.stopPropagation()
-        this.setState({
-            visible: true,
-            count:Number(record.count),
-            surplus:Number(record.surplus),
-            carId:record.id
-        })  
     }
     showTips = () => {
         this.setState({
@@ -122,7 +113,7 @@ class user_list extends Component {
         
     }
     deleteHandleOk =(id)=> {
-        axios.post(api.deleteCar,{id:this.state.carId}).then( (res) => {
+        axios.post(api.deleteUser,{id:this.state.carId}).then( (res) => {
             if(res.data.code == '0') {
                 this.setState({deleteVisible:false})
                 message.success('删除成功！',1.5).then( ()=> {      
@@ -187,8 +178,9 @@ class user_list extends Component {
                 align: 'center',
                 render: (text, record) => (
                     <span>
-                        <Button type="link"  onClick={(e) => this.editCar(e,record)} className="g-btn-edit" >编辑</Button>
-                        <Button type="link" onClick={(e)=> this.deleteCar(e,record)} className="g-btn-del" >删除</Button>
+                        {this.state.permission_list.includes('2003') ? <Button type="link"  onClick={(e) => this.editUser(e,record)} className="g-btn-edit" >编辑</Button> : ''}
+                        
+                        {this.state.permission_list.includes('2004') ? <Button type="link" onClick={(e)=> this.deleteUser(e,record)} className="g-btn-del" >删除</Button>: '' }
                     </span>
                 ),
             }

@@ -21,7 +21,7 @@ class role_details extends Component {
         this.state = {
             persmission_list:[],
             role_name:'',
-            checkedKeys:[],
+            checked_keys:[],
             loading:true
         }
 
@@ -33,20 +33,20 @@ class role_details extends Component {
     getMyPermissionList =() => {
         axios.get(api.roleDetails+ '?role_id='+sessionStorage.getItem('role_id')).then((res) => {
             if(res.data.code == 0) {
-                let reslutList = res.data.data.permission_list;
-                let treeList = []
-                reslutList.map((item,index)=> {
+                let reslut_list = res.data.data.permission_list;
+                let tree_list = []
+                reslut_list.map((item,index)=> {
                     if(item.pid == 0) {
-                        treeList.push({
+                        tree_list.push({
                             role_name:item.permission_name,
                             role_id:item.permission_id,
                             children:[]
                         })
-                        reslutList.splice(index,1)
+                        reslut_list.splice(index,1)
                     }
                     
                 })
-                let persmission_list = this.formatTreeData(reslutList,treeList)
+                let persmission_list = this.formatTreeData(reslut_list,tree_list)
                 this.setState({
                     persmission_list:persmission_list,
                     loading:false
@@ -56,38 +56,44 @@ class role_details extends Component {
         })
     }
     getRolePermissionList =() => {
-        console.log(this.props.match)
         axios.get(api.roleDetails+ '?role_id='+this.props.match.params.id).then((res) => {
             if(res.data.code == 0) {
-                let reslutList = res.data.data.permission_id.split(',');
+                let reslut_list = res.data.data.permission_id.split(',');
+                let real_list = []
+                let remove_id = ['1000','2000','3000','4000']
+                reslut_list.map((item)=> {
+                    if(!remove_id.includes(item)){
+                        real_list.push(item)
+                    } 
+                })
                 this.setState({
                     role_name:res.data.data.role_name,
-                    checkedKeys:reslutList
+                    checked_keys:real_list
                 })
             }
             
         })
     }
-    formatTreeData (reslutList,treeList) {
-        reslutList.map( (item,index) => {
-            treeList.map( (treeItem,treeIndex)=> {
-                if(item.pid == treeItem.role_id) {
-                    treeItem.children.push({
+    formatTreeData (reslut_list,tree_list) {
+        reslut_list.map( (item,index) => {
+            tree_list.map( (tree_item,tree_index)=> {
+                if(item.pid == tree_item.role_id) {
+                    tree_item.children.push({
                             role_name:item.permission_name,
                             role_id:item.permission_id,
                             children:[]
                     })
-                    reslutList.splice(index,1)
+                    reslut_list.splice(index,1)
                 }
             })
         })
-        if(reslutList.length == 0) {
-            return treeList
+        if(reslut_list.length == 0) {
+            return tree_list
         } else {
-            this.formatTreeData(reslutList,treeList)
+            this.formatTreeData(reslut_list,tree_list)
         }
-        this.formatTreeData(reslutList,treeList)
-        return treeList
+        this.formatTreeData(reslut_list,tree_list)
+        return tree_list
     }
     goBack = () => {
         this.props.history.push('/role/list')
@@ -118,7 +124,7 @@ class role_details extends Component {
                         <Tree
                         checkable
                         multiple
-                        checkedKeys={this.state.checkedKeys}
+                        checkedKeys={this.state.checked_keys}
                         disabled
                     >
                         {roleTree(this.state.persmission_list)}

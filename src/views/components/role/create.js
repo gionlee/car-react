@@ -25,8 +25,8 @@ class role_create extends Component {
             },
             persmission_list:[],
             role_name:'',
-            checkedKeys:[],
-            halfCheckedKeys:[]
+            checked_keys:[],
+            half_checked_keys:[]
         }
 
     }
@@ -44,20 +44,20 @@ class role_create extends Component {
     getPermissionList =() => {
         axios.get(api.roleDetails+ '?role_id='+sessionStorage.getItem('role_id')).then((res) => {
             if(res.data.code == 0) {
-                let reslutList = res.data.data.permission_list;
-                let treeList = []
-                reslutList.map((item,index)=> {
+                let reslut_list = res.data.data.permission_list;
+                let tree_list = []
+                reslut_list.map((item,index)=> {
                     if(item.pid == 0) {
-                        treeList.push({
+                        tree_list.push({
                             role_name:item.permission_name,
                             role_id:item.permission_id,
                             children:[]
                         })
-                        reslutList.splice(index,1)
+                        reslut_list.splice(index,1)
                     }
                     
                 })
-                let persmission_list = this.formatTreeData(reslutList,treeList)
+                let persmission_list = this.formatTreeData(reslut_list,tree_list)
                 this.setState({
                     persmission_list:persmission_list
                 })
@@ -65,30 +65,30 @@ class role_create extends Component {
             
         })
     }
-    formatTreeData (reslutList,treeList) {
-        reslutList.map( (item,index) => {
-            treeList.map( (treeItem,treeIndex)=> {
-                if(item.pid == treeItem.role_id) {
-                    treeItem.children.push({
+    formatTreeData (reslut_list,tree_list) {
+        reslut_list.map( (item,index) => {
+            tree_list.map( (tree_item,tree_index)=> {
+                if(item.pid == tree_item.role_id) {
+                    tree_item.children.push({
                             role_name:item.permission_name,
                             role_id:item.permission_id,
                             children:[]
                     })
-                    reslutList.splice(index,1)
+                    reslut_list.splice(index,1)
                 }
             })
         })
-        if(reslutList.length == 0) {
-            return treeList
+        if(reslut_list.length == 0) {
+            return tree_list
         } else {
-            this.formatTreeData(reslutList,treeList)
+            this.formatTreeData(reslut_list,tree_list)
         }
-        this.formatTreeData(reslutList,treeList)
-        return treeList
+        this.formatTreeData(reslut_list,tree_list)
+        return tree_list
     }
     createRole = () => {
         let that = this;
-        axios.post(api.roleCreate,{permission_list:that.state.checkedKeys.concat(that.state.halfCheckedKeys).toString(),role_name:that.state.role_name,role_id:sessionStorage.getItem('role_id')}).then( (res)=> {
+        axios.post(api.roleCreate,{permission_list:that.state.checked_keys.concat(that.state.half_checked_keys).toString(),role_name:that.state.role_name,role_id:sessionStorage.getItem('role_id')}).then( (res)=> {
             if(res.data.code == 0) {
                 message.success('提交成功！',1.5).then( ()=> {
                     this.props.history.push('/role/list')
@@ -100,10 +100,10 @@ class role_create extends Component {
             message.error(err,1.5)
         })
     }
-    setRoleList = (checkedKeys, info) => {
+    setRoleList = (checked_keys, info) => {
         this.setState({
-            checkedKeys:checkedKeys,
-            halfCheckedKeys:info.halfCheckedKeys
+            checked_keys:checked_keys,
+            half_checked_keys:info.halfCheckedKeys
         })
     }
 
@@ -136,7 +136,7 @@ class role_create extends Component {
                         <Tree
                         checkable
                         multiple
-                        checkedKeys={this.state.checkedKeys}
+                        checkedKeys={this.state.checked_keys}
                         onCheck={this.setRoleList}
                         onSelect={this.setRoleList}
                     >
