@@ -39,7 +39,6 @@ class staff_list extends Component {
         }).then( (res) => {
             if(res.data.result) {
                 let list = res.data.data
-                console.log(list)
                 const pager = { ...this.state.pagination };
                 pager.total = res.data.total
                 this.setState ({

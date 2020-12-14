@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from './../views/login';
-import Layout from './../views/layout';
+import Layout from './../layout';
 const createHistory  = require("history").createHashHistory;
 const history = createHistory()
 

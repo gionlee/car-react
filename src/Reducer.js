@@ -1,5 +1,28 @@
 
-export default (state={}, action) => {
+const defaultState = {
+  asideList:[{
+    name: '车辆管理',
+    icon: 'car',
+    path: '/car/list',
+    type: 'car'
+  },{
+    name: '用户管理',
+    icon: 'user',
+    path: '/user/list',
+    type: 'user'
+  },{
+    name: '角色管理',
+    icon: 'contacts',
+    path: '/role/list',
+    type: 'role'
+  },{
+    name: '员工管理',
+    icon: 'team',
+    path: '/staff/list',
+    type: 'staff'
+  },]
+}
+export default (state=defaultState, action) => {
   switch (action.type) {
     case "set_car_details":
       if (action.data) {
