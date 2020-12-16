@@ -19,6 +19,11 @@ class Login extends React.Component {
         }
     }
     componentWillMount  () {
+        try {
+            jwt.verify(cookie.load('user_token'),'54wp9oyghjeakp')
+        } catch (error) {
+            cookie.remove('rememberPw')
+        }
         if(cookie.load('rememberPw')) {
             this.setState({
                 rememberPw: true
@@ -45,7 +50,7 @@ class Login extends React.Component {
         })
         if(res.code == 0) {
             if(this.state.rememberPw) {
-                let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'1d'})
+                let user_token = jwt.sign(data,'54wp9oyghjeakp',{expiresIn:'100d'})
                 cookie.save('user_token',user_token)
             }
             sessionStorage.setItem('user_id',res.data.info.id)

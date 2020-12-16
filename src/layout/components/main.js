@@ -28,8 +28,9 @@ class Main extends Component {
             c_router_name: ''
         }
     }
-    linkto = (url) => {
-        this.props.history.push(url)
+    linktoSecURL = (url) => {
+        console.log(url)
+        this.props.history.push(`/${url.split('/')[1]}/list`)
     }
     async setRouter(pathname) {
         console.log('set router ...')
@@ -79,7 +80,7 @@ class Main extends Component {
                 <Breadcrumb.Item >
                     首页
                             </Breadcrumb.Item>
-                <Breadcrumb.Item className="g-pointer" onClick={this.linkto.bind(this, this.state.router_link)}>
+                <Breadcrumb.Item className="g-pointer" onClick={this.linktoSecURL.bind(this, this.state.router_link)}>
                     <span>{this.state.router_name}</span>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item><span>{this.state.c_router_name}</span></Breadcrumb.Item>
@@ -91,7 +92,7 @@ class Main extends Component {
                 <Breadcrumb.Item >
                     首页
                             </Breadcrumb.Item>
-                <Breadcrumb.Item className="g-pointer" onClick={this.linkto.bind(this, this.state.router_link)}>
+                <Breadcrumb.Item className="g-pointer" onClick={this.linktoSecURL.bind(this, this.state.router_link)}>
                     <span>{this.state.router_name}</span>
                 </Breadcrumb.Item>
             </Breadcrumb>
